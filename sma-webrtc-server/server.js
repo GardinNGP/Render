@@ -44,6 +44,18 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('Motorista desconectou:', socket.id);
     });
+
+    // Quando alguém APERTA o botão PTT
+    socket.on('ptt-start', (payload) => {
+        // Envia o nome de quem falou para todos da sala (menos pra ele mesmo)
+        socket.to(payload.channelId).emit('ptt-start', payload.userName);
+    });
+
+    // Quando alguém SOLTA o botão PTT
+    socket.on('ptt-stop', (channelId) => {
+        // Avisa a sala que o rádio ficou mudo
+        socket.to(channelId).emit('ptt-stop');
+    });
 });
 
 // A porta que o Render vai usar
